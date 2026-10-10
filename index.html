@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoyuReader · 摸鱼阅读器 — macOS 透明置顶小说阅读器</title>
+<style>
+  :root {
+    --ink: #2b2f34;
+    --ink-soft: #5c646d;
+    --paper: #fcfcfe;
+    --line: #e3e5ea;
+    --accent: #c2571f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Hero ── */
+  header { text-align: center; padding: 88px 0 56px; }
+  .appicon {
+    width: 128px; height: 128px; margin: 0 auto 28px;
+    border-radius: 29%; background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 0 12px 40px rgba(43,47,52,.10);
+    display: grid; place-items: center;
+  }
+  h1 { font-size: 42px; font-weight: 700; letter-spacing: .02em; }
+  .tagline { color: var(--ink-soft); font-size: 17px; margin: 10px 0 8px; }
+  .meta { color: #9aa1a9; font-size: 13px; margin-bottom: 34px; }
+  .btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 13px 30px; border-radius: 12px;
+    font-size: 16px; font-weight: 600; text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary {
+    background: var(--ink); color: #fff;
+    box-shadow: 0 6px 20px rgba(43,47,52,.25);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(43,47,52,.32); }
+  .btn-ghost { color: var(--ink); border: 1.5px solid var(--ink); }
+  .btn-ghost:hover { background: rgba(43,47,52,.05); }
+
+  /* ── 章节 ── */
+  section { padding: 34px 0; }
+  h2 {
+    font-size: 13px; font-weight: 600; letter-spacing: .25em;
+    color: #a2a9b1; text-transform: uppercase;
+    margin-bottom: 26px; display: flex; align-items: center; gap: 14px;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px 22px; background: #fff;
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: var(--ink-soft); }
+  .card b { display: block; margin-bottom: 4px; font-size: 15px; }
+  .card span { font-size: 13.5px; color: var(--ink-soft); }
+  .card .k { color: var(--accent); font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  td { padding: 9px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:first-child { white-space: nowrap; width: 150px; }
+  kbd {
+    font-family: -apple-system, "SF Mono", Menlo, monospace;
+    background: #fff; border: 1px solid var(--line); border-bottom-width: 2px;
+    border-radius: 6px; padding: 1px 8px; font-size: 12.5px;
+  }
+
+  .note {
+    border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 18px 22px; background: #fff;
+    font-size: 14px; color: var(--ink-soft);
+  }
+  .note b { color: var(--ink); }
+  code {
+    font-family: "SF Mono", Menlo, monospace; font-size: 13px;
+    background: #f3f4f6; border-radius: 5px; padding: 2px 7px;
+  }
+
+  footer {
+    text-align: center; color: #9aa1a9; font-size: 13px;
+    padding: 60px 0 48px;
+  }
+  footer a { color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <div class="appicon">
+    <!-- 与 App 图标同款：线条开卷 -->
+    <svg width="76" height="76" viewBox="0 0 1024 1024" fill="none">
+      <g stroke="#2b2f34" stroke-width="34" stroke-linecap="round" fill="none">
+        <path d="M262 344 Q387 360 512 416"/>
+        <path d="M762 344 Q637 360 512 416"/>
+        <path d="M262 344 L262 648"/>
+        <path d="M762 344 L762 648"/>
+        <path d="M262 648 Q387 674 512 706"/>
+        <path d="M762 648 Q637 674 512 706"/>
+        <path d="M512 416 L512 706"/>
+      </g>
+    </svg>
+  </div>
+  <h1>MoyuReader</h1>
+  <p class="tagline">macOS 透明置顶小说阅读器 —— 老板走过时，书已经不在了</p>
+  <p class="meta">v0.4 · 双架构（Apple Silicon / Intel）· macOS 13+ · 免安装 · 零依赖</p>
+  <div class="btns">
+    <a class="btn btn-primary" href="MoyuReader.dmg" download>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      下载 DMG（96 KB）
+    </a>
+    <a class="btn btn-ghost" href="MoyuReader-macOS.zip" download>下载 ZIP</a>
+  </div>
+</header>
+
+<section>
+  <h2>它能做什么</h2>
+  <div class="grid">
+    <div class="card"><b>透明置顶</b><span>无边框全透明窗口（黑字），永远浮在工作窗口上面；想要底色随时可调，文字自动换色</span></div>
+    <div class="card"><b><span class="k">Option + H</span> 老板键</b><span>全局热键一键隐藏 / 唤回，不需要辅助功能权限</span></div>
+    <div class="card"><b>章节跳转</b><span>自动解析目录，<span class="k">Cmd + T</span> 打开、<span class="k">Cmd + ←/→</span> 上下章，正则可自定义</span></div>
+    <div class="card"><b>自动翻页</b><span><span class="k">空格</span> 开始，逐行滚动或整页翻页，鼠标悬停自动暂停</span></div>
+    <div class="card"><b>菜单栏常驻</b><span>菜单栏书本图标随时唤回窗口、打开 TXT、退出</span></div>
+    <div class="card"><b>进度记忆</b><span>按文件记住阅读位置，下次打开直接回到原处</span></div>
+    <div class="card"><b>编码识别</b><span>UTF-8 / UTF-16 / GB18030 自动识别，中文 TXT 拖进来就能读</span></div>
+    <div class="card"><b>随手好用</b><span>全窗口拖动移动、边缘拉伸改大小、双击收起、点击唤出进度条</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>快捷键</h2>
+  <table>
+    <tr><td><kbd>Option</kbd> + <kbd>H</kbd></td><td>老板键：全局隐藏 / 唤回窗口</td></tr>
+    <tr><td><kbd>空格</kbd></td><td>开始 / 停止自动阅读</td></tr>
+    <tr><td><kbd>Cmd</kbd> + <kbd>O</kbd></td><td>打开 TXT 文件</td></tr>
+    <tr><td><kbd>Cmd</kbd> + <kbd>T</kbd></td><td>章节目录</td></tr>
+    <tr><td><kbd>Cmd</kbd> + <kbd>←</kbd> / <kbd>→</kbd></td><td>上一章 / 下一章</td></tr>
+    <tr><td><kbd>Cmd</kbd> + <kbd>+</kbd> / <kbd>−</kbd></td><td>字体放大 / 缩小</td></tr>
+    <tr><td><kbd>Cmd</kbd> + <kbd>Q</kbd></td><td>退出</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>首次打开</h2>
+  <div class="note">
+    App 未购买苹果开发者证书（$99/年），首次打开会被 Gatekeeper 拦一次。在终端执行：
+    <div style="margin-top:8px"><code>xattr -dr com.apple.quarantine /Applications/MoyuReader.app</code></div>
+    或者：右键点击 App →「打开」→ 再点「打开」。之后双击即用，不会再有提示。<br>
+    <b>打开 TXT</b>：拖进窗口、<code>Cmd + O</code>、菜单栏图标 → 打开，或在 Finder「打开方式」里选 MoyuReader。
+  </div>
+</section>
+
+<footer>
+  <p>MoyuReader · 纯 Objective-C 单文件实现 · 零第三方依赖 · <a href="https://github.com/hzgys/MoyuReader">GitHub 源码</a></p>
+  <p style="margin-top:4px">灵感来自 <a href="https://github.com/binbyu/Reader">binbyu/Reader</a> · 上班摸鱼有风险，老板键不保熟</p>
+</footer>
+
+</div>
+</body>
+</html>
