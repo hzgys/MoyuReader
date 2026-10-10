@@ -11,9 +11,12 @@ clang -fobjc-arc -O2 -arch arm64 -arch x86_64 Sources/main.m -o build/MoyuReader
 echo "[2/2] 打包 .app..."
 APP=build/MoyuReader.app
 rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp build/MoyuReader "$APP/Contents/MacOS/MoyuReader"
 cp Info.plist "$APP/Contents/Info.plist"
+if [ -f assets/AppIcon.icns ]; then
+    cp assets/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+fi
 touch "$APP"
 codesign --force -s - "$APP" >/dev/null 2>&1 || true
 
