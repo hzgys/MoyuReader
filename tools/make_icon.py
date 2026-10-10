@@ -31,32 +31,25 @@ d = ImageDraw.Draw(img)
 # ── 背景：Apple 风格 squircle（1024 画布，图标体 824，圆角率 22.37%）──
 d.rounded_rectangle((100, 100, 924, 924), radius=184, fill=BG, outline=BORDER, width=6)
 
-# ── 开卷图案 ──
+# ── 线条开卷图案 ──
 cx = SIZE // 2
-# 左页四个锚点：内上 / 外上 / 外下 / 内下
-s_t = (cx, 400)
-o_t = (268, 348)
-o_b = (268, 646)
-s_b = (cx, 694)
+W = 34   # 主线条宽
+w2 = 24  # 内页细节线宽
 
-# 顶边（微弧，像摊开的页面）
-top_l = qbez(s_t, (cx - 130, 372), o_t)
-# 外侧竖边
-side_l = [o_t, o_b]
-# 底边（微弧）
-bot_l = qbez(o_b, (cx - 130, 668), s_b)
+# 左半：顶边、外缘、底边（右半镜像）
+top_l    = qbez((262, 344), (cx - 125, 360), (cx, 416))   # 外上 → 中缝顶（页面向中缝下斜）
+side_l   = [(262, 344), (262, 648)]                        # 外缘竖边
+bot_l    = qbez((262, 648), (cx - 125, 674), (cx, 706))   # 外下 → 中缝底
 
-left_outline = top_l + side_l[1:] + bot_l
-stroke(d, left_outline)
-stroke(d, mirror_x(left_outline))
+stroke(d, top_l, W)
+stroke(d, side_l, W)
+stroke(d, bot_l, W)
+stroke(d, mirror_x(top_l), W)
+stroke(d, mirror_x(side_l), W)
+stroke(d, mirror_x(bot_l), W)
 
 # 中缝
-stroke(d, [s_t, s_b])
-
-# 页面层次线：每页内侧一条平行于底边的弧
-page_l = qbez((cx - 60, 660), (cx - 160, 640), (312, 618))
-stroke(d, page_l, w=30)
-stroke(d, mirror_x(page_l), w=30)
+stroke(d, [(cx, 416), (cx, 706)], W)
 
 out_dir = os.path.join(os.path.dirname(__file__), "..", "assets")
 os.makedirs(out_dir, exist_ok=True)
