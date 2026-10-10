@@ -43,6 +43,28 @@ macOS 原生的透明置顶小说阅读器。参照 [binbyu/Reader](https://gith
 
 **打开文件**：拖 TXT 进窗口、`Cmd + O`、菜单栏图标 → 打开，或在 Finder 里「打开方式 → MoyuReader」。打开后自动记住这本书，下次启动直接回到上次进度。
 
+## 下载使用
+
+在 [Releases](https://github.com/hzgys/MoyuReader/releases) 或仓库里下载：
+
+- **`MoyuReader.dmg`**（推荐）—— 打开后把 `MoyuReader.app` 拖进 `Applications` 文件夹，完成
+- `MoyuReader-macOS.zip` —— 解压得到 `MoyuReader.app`，拖到哪里都能用
+
+支持 Apple Silicon 和 Intel 芯片（双架构 universal binary），macOS 13+。
+
+**首次打开遇到「无法验证开发者 / 已损坏」提示？**
+
+本 App 没有购买苹果开发者证书（$99/年），所以未经过公证，Gatekeeper 会拦一次。任选其一：
+
+```bash
+# 方法一：解除隔离属性（推荐）
+xattr -dr com.apple.quarantine /Applications/MoyuReader.app
+
+# 方法二：右键点击 MoyuReader.app → 打开 → 再点「打开」
+```
+
+之后双击即用，不会再有提示。
+
 ## 构建
 
 ```bash
