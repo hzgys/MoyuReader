@@ -14,6 +14,7 @@ static NSString * const kOpacity      = @"opacity";
 static NSString * const kAutoMode     = @"autoMode";
 static NSString * const kAutoInterval = @"autoInterval";
 static NSString * const kScrollSpeed  = @"scrollSpeed";
+static NSString * const kFontColor    = @"fontColor"; // "black" | "gray"
 static NSString * const kLastBookPath = @"lastBookPath";
 
 // AppDelegate 前置声明（热键回调需要）
@@ -343,6 +344,13 @@ static AppDelegate *_gDelegate = nil;
 - (void)setScrollSpeed:(double)v {
     [[NSUserDefaults standardUserDefaults] setDouble:v forKey:kScrollSpeed];
 }
+- (NSString *)fontColor {
+    NSString *s = [[NSUserDefaults standardUserDefaults] stringForKey:kFontColor];
+    return s.length > 0 ? s : @"black";
+}
+- (void)setFontColor:(NSString *)v {
+    [[NSUserDefaults standardUserDefaults] setObject:v forKey:kFontColor];
+}
 
 #pragma mark 窗口与界面
 
@@ -556,6 +564,20 @@ static AppDelegate *_gDelegate = nil;
     [self addItem:m title:@"字体放大" key:@"+" action:@selector(fontBigger:)];
     [self addItem:m title:@"字体缩小" key:@"-" action:@selector(fontSmaller:)];
 
+    NSMenu *fontColorMenu = [[NSMenu alloc] initWithTitle:@"字体颜色"];
+    NSMenuItem *fcBlack = [[NSMenuItem alloc] initWithTitle:@"黑色" action:@selector(setFontColorBlack:) keyEquivalent:@""];
+    fcBlack.target = self;
+    fcBlack.identifier = @"fcBlack";
+    [fontColorMenu addItem:fcBlack];
+    NSMenuItem *fcGray = [[NSMenuItem alloc] initWithTitle:@"Word 灰"
+        action:@selector(setFontColorGray:) keyEquivalent:@""];
+    fcGray.target = self;
+    fcGray.identifier = @"fcGray";
+    [fontColorMenu addItem:fcGray];
+    NSMenuItem *fontColorItem = [[NSMenuItem alloc] initWithTitle:@"字体颜色" action:nil keyEquivalent:@""];
+    fontColorItem.submenu = fontColorMenu;
+    [m addItem:fontColorItem];
+
     NSMenu *opacityMenu = [[NSMenu alloc] initWithTitle:@"窗口透明度"];
     NSArray *opNames = @[ @"全透（无背景）", @"更透", @"较透", @"适中", @"较实", @"更实" ];
     NSArray<NSNumber *> *opVals = @[ @0.0, @0.25, @0.40, @0.55, @0.70, @0.85 ];
@@ -621,18 +643,18 @@ static AppDelegate *_gDelegate = nil;
     _statusItem.menu = m;
 }
 
-// 文字颜色跟随背景：全透（opacity=0）→ 黑字；有底色 → 白字
+// 文字颜色：用户二选一（黑色 / Word 侧边栏灰 #7F7F7F），显式选择全局生效
 - (void)applyTextColors {
-    BOOL transparent = self.opacity <= 0.001;
+    BOOL gray = [self.fontColor isEqualToString:@"gray"];
     if (_textView) {
-        _textView.textColor = transparent
-            ? [NSColor colorWithWhite:0 alpha:0.85]
-            : [NSColor colorWithWhite:1 alpha:0.88];
+        _textView.textColor = gray
+            ? [NSColor colorWithWhite:0.498 alpha:1.0]     // #7F7F7F
+            : [NSColor colorWithWhite:0 alpha:0.85];
     }
     if (_statusLabel) {
-        _statusLabel.textColor = transparent
-            ? [NSColor colorWithWhite:0 alpha:0.40]
-            : [NSColor colorWithWhite:1 alpha:0.45];
+        _statusLabel.textColor = gray
+            ? [NSColor colorWithWhite:0.498 alpha:0.75]
+            : [NSColor colorWithWhite:0 alpha:0.40];
     }
 }
 
@@ -687,6 +709,10 @@ static AppDelegate *_gDelegate = nil;
             it.title = _autoRunning ? @"停止自动阅读" : @"开始自动阅读";
         } else if ([idr isEqualToString:@"statusToggle"]) {
             it.title = self.window.isVisible ? @"隐藏阅读窗口" : @"显示阅读窗口";
+        } else if ([idr isEqualToString:@"fcBlack"]) {
+            it.state = [self.fontColor isEqualToString:@"black"] ? NSControlStateValueOn : NSControlStateValueOff;
+        } else if ([idr isEqualToString:@"fcGray"]) {
+            it.state = [self.fontColor isEqualToString:@"gray"] ? NSControlStateValueOn : NSControlStateValueOff;
         } else if ([idr isEqualToString:@"modeScroll"]) {
             it.state = [self.autoMode isEqualToString:@"scroll"] ? NSControlStateValueOn : NSControlStateValueOff;
         } else if ([idr isEqualToString:@"modePage"]) {
@@ -1022,6 +1048,14 @@ static AppDelegate *_gDelegate = nil;
 - (void)fontSmaller:(id)sender {
     self.fontSize = MAX(10, self.fontSize - 1);
     [self applyFont];
+}
+- (void)setFontColorBlack:(id)sender {
+    self.fontColor = @"black";
+    [self applyTextColors];
+}
+- (void)setFontColorGray:(id)sender {
+    self.fontColor = @"gray";
+    [self applyTextColors];
 }
 
 - (void)applyFont {
