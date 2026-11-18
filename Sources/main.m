@@ -643,17 +643,17 @@ static AppDelegate *_gDelegate = nil;
     _statusItem.menu = m;
 }
 
-// 文字颜色：用户二选一（黑色 / Word 侧边栏灰 #7F7F7F），显式选择全局生效
+// 文字颜色：用户二选一（黑色 / 浅灰 #A0A0A0），显式选择全局生效
 - (void)applyTextColors {
     BOOL gray = [self.fontColor isEqualToString:@"gray"];
     if (_textView) {
         _textView.textColor = gray
-            ? [NSColor colorWithWhite:0.498 alpha:1.0]     // #7F7F7F
+            ? [NSColor colorWithWhite:0.627 alpha:1.0]     // #A0A0A0
             : [NSColor colorWithWhite:0 alpha:0.85];
     }
     if (_statusLabel) {
         _statusLabel.textColor = gray
-            ? [NSColor colorWithWhite:0.498 alpha:0.75]
+            ? [NSColor colorWithWhite:0.627 alpha:0.75]
             : [NSColor colorWithWhite:0 alpha:0.40];
     }
 }
